@@ -1,0 +1,10 @@
+[package]
+name = "jamery-backend"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+jamery-common.workspace = true
+jamery-database.workspace = true
+
+axum.workspace = true

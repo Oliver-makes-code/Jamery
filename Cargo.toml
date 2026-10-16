@@ -1,0 +1,17 @@
+[workspace]
+resolver = "3"
+members = ["backend", "common", "database", "dist", "frontend"]
+
+[workspace.dependencies]
+jamery-backend.path = "./backend"
+jamery-common.path = "./common"
+jamery-database.path = "./database"
+jamery-frontend.path = "./frontend"
+
+axum = { version = "0.8.9", features = ["macros", "multipart"] }
+serde = { version = "1.0.229", features = ["derive"] }
+leptos = { version = "0.8.22", features = ["csr"] }
+sea-orm = "2.0.4"
+tokio = { version = "1.53.3", features = ["full"] }
+rust-embed = "8.13.0"
+mime_guess = "2.0.5"

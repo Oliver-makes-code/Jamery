@@ -1,0 +1,12 @@
+[package]
+name = "jamery-dist"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+jamery-backend.workspace = true
+
+axum.workspace = true
+tokio.workspace = true
+rust-embed.workspace = true
+mime_guess.workspace = true
