@@ -11,7 +11,12 @@ jamery-frontend.path = "./frontend"
 axum = { version = "0.8.9", features = ["macros", "multipart"] }
 serde = { version = "1.0.229", features = ["derive"] }
 leptos = { version = "0.8.22", features = ["csr"] }
+leptos_router = "0.8.17"
 sea-orm = "2.0.4"
 tokio = { version = "1.53.3", features = ["full"] }
 rust-embed = "8.13.0"
 mime_guess = "2.0.5"
+anyhow = "1.0.104"
+url = "2.5.8"
+gloo-net = "0.7.0"
+web-sys = "0.3.106"

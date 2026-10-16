@@ -1,9 +1,10 @@
-use std::net::SocketAddr;
+use std::{io, net::SocketAddr};
 
 use axum::{
     body::Body,
     http::{Response, StatusCode, Uri, header},
 };
+use jamery_backend::auth::get_oauth_url;
 use rust_embed::Embed;
 
 #[derive(Embed)]
@@ -40,17 +41,23 @@ async fn serve_frontend(uri: Uri) -> Response<Body> {
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> anyhow::Result<()> {
+    match dotenv::dotenv() {
+        Err(dotenv::Error::Io(io)) if io.kind() == io::ErrorKind::NotFound => {}
+        Err(err) => return Err(err.into()),
+        Ok(_) => {}
+    }
+
     let api = jamery_backend::router();
 
     let app = api.fallback(serve_frontend);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    let listener = tokio::net::TcpListener::bind(addr)
-        .await
-        .expect("failed to bind address");
+    let listener = tokio::net::TcpListener::bind(addr).await?;
 
     println!("Jamery listening on http://{addr}");
 
-    axum::serve(listener, app).await.expect("server failed");
+    axum::serve(listener, app).await?;
+
+    return Ok(());
 }

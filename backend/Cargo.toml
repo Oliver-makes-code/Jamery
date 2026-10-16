@@ -8,3 +8,5 @@ jamery-common.workspace = true
 jamery-database.workspace = true
 
 axum.workspace = true
+anyhow.workspace = true
+url.workspace = true
