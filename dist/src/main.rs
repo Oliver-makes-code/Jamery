@@ -48,7 +48,7 @@ async fn main() -> anyhow::Result<()> {
         Ok(_) => {}
     }
 
-    let api = jamery_backend::router();
+    let api = jamery_backend::router().await?;
 
     let app = api.fallback(serve_frontend);
 

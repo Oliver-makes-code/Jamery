@@ -2,6 +2,10 @@
 resolver = "3"
 members = ["backend", "common", "database", "dist", "frontend"]
 
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+
 [workspace.dependencies]
 jamery-backend.path = "./backend"
 jamery-common.path = "./common"
@@ -20,3 +24,7 @@ anyhow = "1.0.104"
 url = "2.5.8"
 gloo-net = "0.7.0"
 web-sys = "0.3.106"
+jsonwebtoken = { version = "11.1.0", features = ["rust_crypto"] }
+dotenv = "0.15.0"
+reqwest = { version = "0.13.5", features = ["json", "form"] }
+pawkit-interner = "0.1.25"

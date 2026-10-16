@@ -71,4 +71,10 @@ pub fn Login() -> impl IntoView {
             }
         }
     });
+
+    return view! {
+        <main>
+            "Redirecting..."
+        </main>
+    };
 }
