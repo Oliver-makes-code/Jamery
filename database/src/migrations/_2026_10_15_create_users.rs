@@ -20,7 +20,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Users::Username).string().not_null())
                     .col(ColumnDef::new(Users::DisplayName).string())
                     .col(ColumnDef::new(Users::AvatarUrl).string())
-                    .col(ColumnDef::new(Users::CreatedAt).date_time())
+                    .col(ColumnDef::new(Users::CreatedAt).date_time().not_null())
                     .to_owned(),
             )
             .await?;

@@ -10,7 +10,8 @@ use axum::{
     routing::{get, post},
 };
 use jamery_common::auth::Claims;
-use jsonwebtoken::{DecodingKey, EncodingKey, Header};
+use jamery_database::handler::DatabaseHandler;
+use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header};
 use pawkit_interner::InternString;
 use reqwest::Client;
 
@@ -25,6 +26,7 @@ pub mod fluxer;
 #[derive(Clone)]
 pub struct AppState {
     pub http: Client,
+    pub db: DatabaseHandler,
 
     pub fluxer_url: InternString,
     pub fluxer_api: InternString,
@@ -40,6 +42,7 @@ pub struct AppState {
 
 impl AppState {
     pub async fn new() -> anyhow::Result<Self> {
+        let database_url = env::var("JAMERY_DATABASE_URL")?;
         let fluxer_url: InternString = env::var("JAMERY_FLUXER_URL")?.trim_end_matches('/').into();
         let client_id = env::var("JAMERY_CLIENT_ID")?.into();
         let client_secret = env::var("JAMERY_CLIENT_SECRET")?.into();
@@ -82,15 +85,18 @@ impl AppState {
         let fluxer_api = endpoints.api.trim_end_matches('/').into();
         let fluxer_media = endpoints.media.trim_end_matches('/').into();
 
+        let db = DatabaseHandler::new(&database_url).await?;
+
         return Ok(Self {
             http,
+            db,
             fluxer_url,
             fluxer_api,
             fluxer_media,
             client_id,
             client_secret,
             base_url,
-            jwt_header: Header::default(),
+            jwt_header: Header::new(Algorithm::HS256),
             jwt_encoding,
             jwt_decoding,
         });

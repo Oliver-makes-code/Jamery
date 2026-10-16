@@ -7,4 +7,4 @@ edition = "2024"
 jamery-common.workspace = true
 
 sea-orm.workspace = true
-sea-orm-migration = "2.0.4"
+sea-orm-migration.workspace = true
