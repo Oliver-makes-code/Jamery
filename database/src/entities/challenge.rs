@@ -8,6 +8,7 @@ pub struct Model {
     pub verifier: String,
 
     pub expires_at: DateTimeUtc,
+    pub consumed: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

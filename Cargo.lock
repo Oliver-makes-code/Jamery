@@ -2049,12 +2049,15 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "axum",
+ "base64 0.23.1",
+ "getrandom 0.4.3",
  "jamery-common",
  "jamery-database",
  "jsonwebtoken",
  "pawkit-interner",
  "reqwest",
  "serde",
+ "sha2 0.11.1",
  "url",
 ]
 

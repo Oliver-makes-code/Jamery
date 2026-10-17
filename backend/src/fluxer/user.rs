@@ -5,7 +5,8 @@ use crate::{AppState, auth::get_redirect_uri, fluxer::FluxerEndpoints};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FluxerUser {
-    pub id: String,
+    #[serde(with = "jamery_common::u64_as_string")]
+    pub id: u64,
     pub username: String,
     pub discriminator: String,
     pub global_name: Option<String>,
@@ -18,7 +19,7 @@ struct OAuthToken {
 }
 
 impl FluxerUser {
-    pub async fn fetch(state: &AppState, args: &OAuthArgs) -> anyhow::Result<Self> {
+    pub async fn fetch(state: &AppState, args: &OAuthArgs, verifier: &str) -> anyhow::Result<Self> {
         let response = state
             .http
             .post(FluxerEndpoints::oauth_token(&state.fluxer_api))
@@ -28,6 +29,7 @@ impl FluxerUser {
                 ("redirect_uri", get_redirect_uri(&state.base_url)?.as_str()),
                 ("client_id", state.client_id.as_str()),
                 ("client_secret", state.client_secret.as_str()),
+                ("code_verifier", verifier),
             ])
             .send()
             .await?;
@@ -62,7 +64,7 @@ impl FluxerUser {
     pub fn avatar_url(&self, state: &AppState) -> Option<String> {
         return Some(FluxerEndpoints::avatar(
             &state.fluxer_media,
-            &self.id,
+            self.id,
             self.avatar.as_deref()?,
         ));
     }

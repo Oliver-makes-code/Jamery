@@ -16,7 +16,7 @@ use pawkit_interner::InternString;
 use reqwest::Client;
 
 use crate::{
-    auth::login::{login_get, login_post},
+    auth::{challenge::challenge, login::login},
     fluxer::{FluxerEndpoints, FluxerWellKnown},
 };
 
@@ -102,7 +102,7 @@ impl AppState {
         });
     }
 
-    pub fn encode_jwt(&self, user_id: &str) -> Result<String, jsonwebtoken::errors::Error> {
+    pub fn encode_jwt(&self, user_id: u64) -> Result<String, jsonwebtoken::errors::Error> {
         let now = SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .expect("system clock is before Unix epoch")
@@ -125,7 +125,7 @@ pub async fn router() -> anyhow::Result<Router> {
     let state = AppState::new().await?;
 
     return Ok(Router::new()
-        .route("/api/auth/login", get(login_get))
-        .route("/api/auth/login", post(login_post))
+        .route("/api/auth/challenge", post(challenge))
+        .route("/api/auth/login", post(login))
         .with_state(state));
 }

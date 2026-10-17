@@ -4,7 +4,7 @@ use sea_orm::{entity::prelude::DateTimeUtc, *};
 #[sea_orm(table_name = "users")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub user_id: i64,
+    pub id: i64,
 
     pub username: String,
     pub display_name: Option<String>,

@@ -1,9 +1,12 @@
-use std::{sync::Arc, time::Duration};
+use std::time::Duration;
 
 use sea_orm::{ActiveValue, ConnectOptions, Database, DatabaseConnection, DbErr, Value};
 use sea_orm_migration::MigratorTrait;
 
 use crate::migrations;
+
+pub mod challenge;
+pub mod user;
 
 pub enum DatabaseUpdate<T> {
     Keep,

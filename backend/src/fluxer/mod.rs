@@ -28,7 +28,7 @@ impl FluxerEndpoints {
         return format!("{url}/users/@me");
     }
 
-    pub fn avatar(url: &str, user_id: &str, avatar_hash: &str) -> String {
+    pub fn avatar(url: &str, user_id: u64, avatar_hash: &str) -> String {
         return format!("{url}/avatars/{user_id}/{avatar_hash}.webp");
     }
 }

@@ -14,3 +14,6 @@ jsonwebtoken.workspace = true
 serde.workspace = true
 reqwest.workspace = true
 pawkit-interner.workspace = true
+base64 = "0.23.1"
+sha2 = "0.11.1"
+getrandom = "0.4.3"

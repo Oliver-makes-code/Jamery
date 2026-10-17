@@ -9,5 +9,6 @@ pub struct OAuthArgs {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub exp: u64,
-    pub sub: String,
+    #[serde(with = "crate::u64_as_string")]
+    pub sub: u64,
 }

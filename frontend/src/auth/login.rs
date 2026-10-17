@@ -14,7 +14,10 @@ struct OAuthCallback {
 }
 
 async fn handle_oauth_redirect(navigate: &impl Fn(&str, NavigateOptions)) {
-    let Ok(resp) = gloo_net::http::Request::get("/api/auth/login").send().await else {
+    let Ok(resp) = gloo_net::http::Request::post("/api/auth/challenge")
+        .send()
+        .await
+    else {
         return;
     };
 

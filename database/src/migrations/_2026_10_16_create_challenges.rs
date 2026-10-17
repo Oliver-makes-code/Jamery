@@ -19,6 +19,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(Challenges::Verifier).string().not_null())
                     .col(ColumnDef::new(Challenges::ExpiresAt).date_time().not_null())
+                    .col(ColumnDef::new(Challenges::Consumed).boolean().not_null())
                     .to_owned(),
             )
             .await?;
@@ -41,4 +42,5 @@ enum Challenges {
     State,
     Verifier,
     ExpiresAt,
+    Consumed,
 }
