@@ -4,7 +4,6 @@ use axum::{
     body::Body,
     http::{Response, StatusCode, Uri, header},
 };
-use jamery_backend::auth::get_oauth_url;
 use rust_embed::Embed;
 
 #[derive(Embed)]

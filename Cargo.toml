@@ -22,7 +22,7 @@ sea-orm = { version = "2.0.4", features = [
     "macros",
 ] }
 sea-orm-migration = "2.0.4"
-tokio = { version = "1.53.3", features = ["full"] }
+tokio = { version = "1.54.0", features = ["full"] }
 rust-embed = "8.13.0"
 mime_guess = "2.0.5"
 anyhow = "1.0.104"
@@ -33,3 +33,8 @@ jsonwebtoken = { version = "11.1.0", features = ["rust_crypto"] }
 dotenv = "0.15.0"
 reqwest = { version = "0.13.5", features = ["json", "form"] }
 pawkit-interner = "0.1.25"
+base64 = "0.23.1"
+sha2 = "0.11.1"
+getrandom = "0.4.3"
+opendal = { version = "0.59.5", features = ["services-fs"] }
+ulid = { version = "3.0.0", features = ["serde"] }

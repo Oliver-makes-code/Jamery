@@ -3,3 +3,4 @@
 .env
 rustc-ice*.txt
 *.db
+.blk/

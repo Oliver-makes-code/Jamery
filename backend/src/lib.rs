@@ -12,21 +12,26 @@ use axum::{
 use jamery_common::auth::Claims;
 use jamery_database::handler::DatabaseHandler;
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header};
+use opendal::{Buffer, Operator};
 use pawkit_interner::InternString;
 use reqwest::Client;
+use ulid::Ulid;
 
 use crate::{
     auth::{challenge::challenge, login::login},
     fluxer::{FluxerEndpoints, FluxerWellKnown},
+    media::fetch_media,
 };
 
 pub mod auth;
 pub mod fluxer;
+pub mod media;
 
 #[derive(Clone)]
 pub struct AppState {
     pub http: Client,
     pub db: DatabaseHandler,
+    pub op: Operator,
 
     pub fluxer_url: InternString,
     pub fluxer_api: InternString,
@@ -48,6 +53,7 @@ impl AppState {
         let client_secret = env::var("JAMERY_CLIENT_SECRET")?.into();
         let base_url = env::var("JAMERY_BASE_URL")?.trim_end_matches('/').into();
         let jwt_secret = env::var("JAMERY_JWT_SECRET")?;
+        let bulk_path = env::var("JAMERY_BULK_PATH")?;
 
         anyhow::ensure!(
             jwt_secret.len() == 64 && jwt_secret.bytes().all(|b| b.is_ascii_hexdigit()),
@@ -87,9 +93,14 @@ impl AppState {
 
         let db = DatabaseHandler::new(&database_url).await?;
 
+        tokio::fs::create_dir_all(&bulk_path).await?;
+        let builder = opendal::services::Fs::default().root(&bulk_path);
+        let op = Operator::new(builder)?;
+
         return Ok(Self {
             http,
             db,
+            op,
             fluxer_url,
             fluxer_api,
             fluxer_media,
@@ -119,6 +130,18 @@ impl AppState {
             &self.jwt_encoding,
         );
     }
+
+    pub async fn upload_file(&self, data: &[u8]) -> Result<Ulid, opendal::Error> {
+        let id = Ulid::generate();
+
+        self.op.write(&id.to_string(), data.to_vec()).await?;
+
+        return Ok(id);
+    }
+
+    pub async fn fetch_file(&self, id: Ulid) -> Result<Buffer, opendal::Error> {
+        return self.op.read(&id.to_string()).await;
+    }
 }
 
 pub async fn router() -> anyhow::Result<Router> {
@@ -127,5 +150,6 @@ pub async fn router() -> anyhow::Result<Router> {
     return Ok(Router::new()
         .route("/api/auth/challenge", post(challenge))
         .route("/api/auth/login", post(login))
+        .route("/media/{path}", get(fetch_media))
         .with_state(state));
 }
