@@ -3,6 +3,7 @@ use sea_orm_migration::{MigrationTrait, MigratorTrait, async_trait};
 pub mod _2026_10_15_create_users;
 pub mod _2026_10_16_create_challenges;
 pub mod _2026_10_19_create_media;
+pub mod _2026_10_20_create_jams;
 
 pub struct Migrator;
 
@@ -13,6 +14,7 @@ impl MigratorTrait for Migrator {
             Box::new(_2026_10_15_create_users::Migration),
             Box::new(_2026_10_16_create_challenges::Migration),
             Box::new(_2026_10_19_create_media::Migration),
+            Box::new(_2026_10_20_create_jams::Migration),
         ];
     }
 }

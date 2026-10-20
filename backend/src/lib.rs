@@ -7,9 +7,11 @@ use std::{
 
 use axum::{
     Router,
-    extract::DefaultBodyLimit,
+    extract::{DefaultBodyLimit, Request, State},
     http::HeaderMap,
-    routing::{get, post},
+    middleware::{self, Next},
+    response::Response,
+    routing::{MethodRouter, get, post},
 };
 use jamery_common::auth::Claims;
 use jamery_database::handler::DatabaseHandler;
@@ -189,6 +191,25 @@ impl AppState {
         .map_err(|_| StatusCode::UNAUTHORIZED)?;
 
         return Ok(token_data.claims);
+    }
+
+    async fn authorization_middleware(
+        State(app_state): State<AppState>,
+        mut request: Request,
+        next: Next,
+    ) -> Result<Response, StatusCode> {
+        let claims = app_state.get_token(request.headers())?;
+
+        request.extensions_mut().insert(claims);
+
+        return Ok(next.run(request).await);
+    }
+
+    pub fn authorized(&self, route: MethodRouter<AppState>) -> MethodRouter<AppState> {
+        route.route_layer(middleware::from_fn_with_state(
+            self.clone(),
+            Self::authorization_middleware,
+        ))
     }
 }
 

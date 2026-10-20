@@ -2,7 +2,11 @@ use sea_orm::{DbErr, DeriveValueType, TryFromU64, prelude::Uuid};
 use ulid::Ulid;
 
 pub mod challenge;
+pub mod jam;
 pub mod media;
+pub mod submission;
+pub mod submission_media;
+pub mod submission_user;
 pub mod user;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, DeriveValueType)]
