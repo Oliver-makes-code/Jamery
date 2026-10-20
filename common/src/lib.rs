@@ -1,4 +1,5 @@
 pub mod auth;
+pub mod jam;
 pub mod user;
 
 pub mod u64_as_string {

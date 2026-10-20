@@ -38,3 +38,4 @@ sha2 = "0.11.1"
 getrandom = "0.4.3"
 opendal = { version = "0.59.5", features = ["services-fs"] }
 ulid = { version = "3.0.0", features = ["serde"] }
+chrono = { version = "0.4.45", features = ["serde"] }

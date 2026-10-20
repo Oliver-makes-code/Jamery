@@ -8,11 +8,11 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: DatabaseId,
 
+    pub created_by: i64,
+
     pub title: String,
     #[sea_orm(column_type = "Text")]
     pub description: Option<String>,
-
-    pub created_by: i64,
 
     pub starts: DateTimeUtc,
     pub ends: DateTimeUtc,

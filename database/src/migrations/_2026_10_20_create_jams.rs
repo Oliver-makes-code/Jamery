@@ -46,7 +46,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(JamSubmissions::JamId).uuid().not_null())
                     .col(ColumnDef::new(JamSubmissions::Title).string().not_null())
                     .col(ColumnDef::new(JamSubmissions::Description).text().null())
-                    .col(ColumnDef::new(JamSubmissions::Icon).uuid().not_null())
+                    .col(ColumnDef::new(JamSubmissions::Icon).uuid().null())
                     .col(ColumnDef::new(JamSubmissions::SourceUrl).string().null())
                     .col(
                         ColumnDef::new(JamSubmissions::Updated)
@@ -59,6 +59,13 @@ impl MigrationTrait for Migration {
                             .from(JamSubmissions::Table, JamSubmissions::JamId)
                             .to(Jams::Table, Jams::Id)
                             .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk_jam_submissions_icon")
+                            .from(JamSubmissions::Table, JamSubmissions::Icon)
+                            .to(Media::Table, Media::Id)
+                            .on_delete(ForeignKeyAction::SetNull),
                     )
                     .to_owned(),
             )

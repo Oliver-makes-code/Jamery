@@ -10,14 +10,13 @@ pub struct Model {
 
     pub jam_id: DatabaseId,
 
+    pub icon: Option<DatabaseId>,
+
     pub title: String,
     #[sea_orm(column_type = "Text")]
     pub description: Option<String>,
-    pub icon: DatabaseId,
 
     pub source_url: Option<String>,
-
-    pub updated: DateTimeUtc,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -28,11 +28,13 @@ use crate::{
     auth::{challenge::challenge, login::login},
     fluxer::{FluxerEndpoints, FluxerWellKnown},
     media::fetch_media,
+    user::{users, users_me},
 };
 
 pub mod auth;
 pub mod fluxer;
 pub mod media;
+pub mod user;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -152,7 +154,7 @@ impl AppState {
 
     fn extract_token<'a>(&self, headers: &'a HeaderMap) -> Result<&'a str, StatusCode> {
         if let Some(auth) = headers.get(header::AUTHORIZATION) {
-            let auth = auth.to_str().map_err(|_| StatusCode::UNAUTHORIZED)?;
+            let auth = auth.to_str().map_err(|_| StatusCode::UNAUTHORIZED)?.trim();
 
             let Some((scheme, token)) = auth.split_once(' ') else {
                 return Err(StatusCode::UNAUTHORIZED);
@@ -219,6 +221,8 @@ pub async fn router() -> anyhow::Result<Router> {
     return Ok(Router::new()
         .route("/api/auth/challenge", post(challenge))
         .route("/api/auth/login", post(login))
+        .route("/api/users/@me", state.authorized(get(users_me)))
+        .route("/api/users/{user}", get(users))
         .route("/media/{path}", get(fetch_media))
         .layer(DefaultBodyLimit::max(2 * 1024 * 1024))
         .with_state(state));

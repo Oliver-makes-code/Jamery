@@ -11,3 +11,4 @@ leptos_router.workspace = true
 serde.workspace = true
 gloo-net.workspace = true
 web-sys.workspace = true
+getrandom = { version = "0.4", features = ["wasm_js"] }
