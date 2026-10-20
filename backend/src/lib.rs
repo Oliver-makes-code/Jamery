@@ -8,14 +8,18 @@ use std::{
 use axum::{
     Router,
     extract::DefaultBodyLimit,
+    http::HeaderMap,
     routing::{get, post},
 };
 use jamery_common::auth::Claims;
 use jamery_database::handler::DatabaseHandler;
-use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header};
+use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use opendal::{Buffer, Operator};
 use pawkit_interner::InternString;
-use reqwest::Client;
+use reqwest::{
+    Client, StatusCode,
+    header::{self, COOKIE},
+};
 use ulid::Ulid;
 
 use crate::{
@@ -142,6 +146,49 @@ impl AppState {
 
     pub async fn fetch_file(&self, id: Ulid) -> Result<Buffer, opendal::Error> {
         return self.op.read(&id.to_string()).await;
+    }
+
+    fn extract_token<'a>(&self, headers: &'a HeaderMap) -> Result<&'a str, StatusCode> {
+        if let Some(auth) = headers.get(header::AUTHORIZATION) {
+            let auth = auth.to_str().map_err(|_| StatusCode::UNAUTHORIZED)?;
+
+            let Some((scheme, token)) = auth.split_once(' ') else {
+                return Err(StatusCode::UNAUTHORIZED);
+            };
+
+            if !scheme.eq_ignore_ascii_case("bearer") || token.is_empty() {
+                return Err(StatusCode::UNAUTHORIZED);
+            }
+
+            return Ok(token);
+        }
+
+        let cookie_header = headers
+            .get(COOKIE)
+            .and_then(|value| value.to_str().ok())
+            .ok_or(StatusCode::UNAUTHORIZED)?;
+
+        let token = cookie_header
+            .split(';')
+            .filter_map(|cookie| cookie.trim().split_once('='))
+            .find(|(name, _)| *name == "jamery_token")
+            .map(|(_, value)| value)
+            .ok_or(StatusCode::UNAUTHORIZED)?;
+
+        return Ok(token);
+    }
+
+    pub fn get_token(&self, headers: &HeaderMap) -> Result<Claims, StatusCode> {
+        let token = self.extract_token(headers)?;
+
+        let token_data = jsonwebtoken::decode::<Claims>(
+            token,
+            &self.jwt_decoding,
+            &Validation::new(Algorithm::HS256),
+        )
+        .map_err(|_| StatusCode::UNAUTHORIZED)?;
+
+        return Ok(token_data.claims);
     }
 }
 
