@@ -6,6 +6,7 @@ use sea_orm_migration::MigratorTrait;
 use crate::migrations;
 
 pub mod challenge;
+pub mod media;
 pub mod user;
 
 pub enum DatabaseUpdate<T> {

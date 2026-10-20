@@ -9,3 +9,4 @@ jamery-common.workspace = true
 sea-orm.workspace = true
 sea-orm-migration.workspace = true
 ulid.workspace = true
+mime_guess.workspace = true

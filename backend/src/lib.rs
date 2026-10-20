@@ -7,6 +7,7 @@ use std::{
 
 use axum::{
     Router,
+    extract::DefaultBodyLimit,
     routing::{get, post},
 };
 use jamery_common::auth::Claims;
@@ -151,5 +152,6 @@ pub async fn router() -> anyhow::Result<Router> {
         .route("/api/auth/challenge", post(challenge))
         .route("/api/auth/login", post(login))
         .route("/media/{path}", get(fetch_media))
+        .layer(DefaultBodyLimit::max(2 * 1024 * 1024))
         .with_state(state));
 }

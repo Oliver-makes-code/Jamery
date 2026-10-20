@@ -1,4 +1,4 @@
-use axum::{body::Body, extract::State, response::Response};
+use axum::{body::Body, extract::State};
 use reqwest::StatusCode;
 
 use crate::{
@@ -6,16 +6,13 @@ use crate::{
     auth::{generate_oauth_secrets, get_oauth_url},
 };
 
-pub async fn challenge(State(app_state): State<AppState>) -> Response {
+pub async fn challenge(State(app_state): State<AppState>) -> Result<Body, StatusCode> {
     let (state, verifier) = match generate_oauth_secrets() {
         Ok(it) => it,
         Err(err) => {
             eprintln!("{:?}", err);
 
-            return Response::builder()
-                .status(StatusCode::INTERNAL_SERVER_ERROR)
-                .body(Body::empty())
-                .unwrap();
+            return Err(StatusCode::INTERNAL_SERVER_ERROR);
         }
     };
 
@@ -26,14 +23,8 @@ pub async fn challenge(State(app_state): State<AppState>) -> Response {
     if let Err(err) = app_state.db.begin_challenge(state, verifier).await {
         eprintln!("{:?}", err);
 
-        return Response::builder()
-            .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .body(Body::empty())
-            .unwrap();
+        return Err(StatusCode::INTERNAL_SERVER_ERROR);
     }
 
-    return Response::builder()
-        .status(StatusCode::OK)
-        .body(Body::new(oauth_url))
-        .unwrap();
+    return Ok(Body::new(oauth_url));
 }

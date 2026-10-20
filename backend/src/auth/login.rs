@@ -3,22 +3,19 @@ use jamery_common::auth::OAuthArgs;
 
 use crate::{AppState, fluxer::user::FluxerUser};
 
-pub async fn login(State(app_state): State<AppState>, Json(args): Json<OAuthArgs>) -> Response {
+pub async fn login(
+    State(app_state): State<AppState>,
+    Json(args): Json<OAuthArgs>,
+) -> Result<Response, StatusCode> {
     let verifier = match app_state.db.consume_challenge(&args.state).await {
         Ok(Some(verifier)) => verifier,
         Ok(None) => {
-            return Response::builder()
-                .status(StatusCode::FORBIDDEN)
-                .body(Body::empty())
-                .unwrap();
+            return Err(StatusCode::FORBIDDEN);
         }
         Err(err) => {
             eprintln!("{:?}", err);
 
-            return Response::builder()
-                .status(StatusCode::INTERNAL_SERVER_ERROR)
-                .body(Body::empty())
-                .unwrap();
+            return Err(StatusCode::INTERNAL_SERVER_ERROR);
         }
     };
 
@@ -27,10 +24,7 @@ pub async fn login(State(app_state): State<AppState>, Json(args): Json<OAuthArgs
         Err(err) => {
             eprintln!("{:?}", err);
 
-            return Response::builder()
-                .status(StatusCode::INTERNAL_SERVER_ERROR)
-                .body(Body::empty())
-                .unwrap();
+            return Err(StatusCode::INTERNAL_SERVER_ERROR);
         }
     };
 
@@ -46,18 +40,15 @@ pub async fn login(State(app_state): State<AppState>, Json(args): Json<OAuthArgs
     {
         eprintln!("{:?}", err);
 
-        return Response::builder()
-            .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .body(Body::empty())
-            .unwrap();
+        return Err(StatusCode::INTERNAL_SERVER_ERROR);
     }
 
-    return Response::builder()
+    return Ok(Response::builder()
         .status(StatusCode::CREATED)
         .header(
             axum::http::header::SET_COOKIE,
             format!("jamery_token={jwt}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000"),
         )
         .body(Body::empty())
-        .unwrap();
+        .unwrap());
 }

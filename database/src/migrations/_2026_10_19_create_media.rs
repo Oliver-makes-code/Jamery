@@ -13,6 +13,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(ColumnDef::new(Media::Id).uuid().primary_key().not_null())
                     .col(ColumnDef::new(Media::FileName).string().not_null())
+                    .col(ColumnDef::new(Media::ContentType).string().not_null())
                     .to_owned(),
             )
             .await?;
@@ -34,4 +35,5 @@ enum Media {
     Table,
     Id,
     FileName,
+    ContentType,
 }

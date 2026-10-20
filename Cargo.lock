@@ -2159,6 +2159,7 @@ name = "jamery-database"
 version = "0.1.0"
 dependencies = [
  "jamery-common",
+ "mime_guess",
  "sea-orm",
  "sea-orm-migration",
  "ulid",
