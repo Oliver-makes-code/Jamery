@@ -1,12 +1,24 @@
+use axum::{Router, routing::post};
 use base64::{Engine, engine::general_purpose::URL_SAFE_NO_PAD};
 use getrandom::fill;
 use sha2::{Digest, Sha256};
 use url::Url;
 
-use crate::AppState;
+use crate::{
+    AppState,
+    auth::{challenge::challenge, login::login},
+};
 
 pub mod challenge;
 pub mod login;
+
+impl AppState {
+    pub fn auth_routes(&self, router: Router<Self>) -> Router<Self> {
+        return router
+            .route("/api/auth/challenge", post(challenge))
+            .route("/api/auth/login", post(login));
+    }
+}
 
 pub fn get_redirect_uri(base_url: &str) -> Result<Url, url::ParseError> {
     let mut redirect_uri = Url::parse(base_url)?;

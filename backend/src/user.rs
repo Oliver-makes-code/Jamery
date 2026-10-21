@@ -1,11 +1,12 @@
 use axum::{
-    Extension, Json,
+    Extension, Json, Router,
     extract::{Path, State},
+    routing::get,
 };
 use jamery_common::{auth::Claims, user::User};
 use reqwest::StatusCode;
 
-use crate::AppState;
+use crate::{AppState, map_status_opt};
 
 pub async fn users(
     State(app_state): State<AppState>,
@@ -22,15 +23,18 @@ pub async fn users_me(
 }
 
 async fn get_user(app_state: &AppState, user_id: u64) -> Result<Json<User>, StatusCode> {
-    match app_state.db.fetch_user(user_id).await {
-        Ok(Some(user)) => return Ok(Json(user)),
-        Ok(None) => {
-            return Err(StatusCode::NOT_FOUND);
-        }
-        Err(err) => {
-            eprintln!("{:?}", err);
+    return map_status_opt(
+        app_state.db.fetch_user(user_id).await,
+        StatusCode::INTERNAL_SERVER_ERROR,
+        StatusCode::NOT_FOUND,
+    )
+    .map(Json);
+}
 
-            return Err(StatusCode::INTERNAL_SERVER_ERROR);
-        }
+impl AppState {
+    pub fn user_routes(&self, router: Router<Self>) -> Router<Self> {
+        return router
+            .route("/api/users/@me", self.authorized(get(users_me)))
+            .route("/api/users/{user}", get(users));
     }
 }

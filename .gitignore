@@ -4,3 +4,4 @@
 rustc-ice*.txt
 *.db
 .blk/
+logs/

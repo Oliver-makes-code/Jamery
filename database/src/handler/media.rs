@@ -1,4 +1,5 @@
-use sea_orm::{ActiveModelTrait, ActiveValue, DbErr};
+use jamery_common::media::Media;
+use sea_orm::{ActiveModelTrait, ActiveValue, DbErr, EntityTrait};
 use ulid::Ulid;
 
 use crate::{
@@ -19,5 +20,17 @@ impl DatabaseHandler {
         .await?;
 
         return Ok(());
+    }
+
+    pub async fn fetch_media(&self, id: Ulid) -> Result<Option<Media>, DbErr> {
+        let media = media::Entity::find_by_id(DatabaseId::from(id))
+            .one(&self.conn)
+            .await?;
+
+        return Ok(media.map(|it| Media {
+            id: it.id.into(),
+            file_name: it.file_name,
+            content_type: it.content_type,
+        }));
     }
 }

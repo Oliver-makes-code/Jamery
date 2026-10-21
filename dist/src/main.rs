@@ -54,7 +54,7 @@ async fn main() -> anyhow::Result<()> {
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     let listener = tokio::net::TcpListener::bind(addr).await?;
 
-    println!("Jamery listening on http://{addr}");
+    pawkit_logger::log!(info, "Jamery listening on http://{addr}");
 
     axum::serve(listener, app).await?;
 

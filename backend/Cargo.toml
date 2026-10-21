@@ -21,3 +21,4 @@ opendal.workspace = true
 tokio.workspace = true
 ulid.workspace = true
 mime_guess.workspace = true
+pawkit-logger = "0.1.25"

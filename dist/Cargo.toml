@@ -12,3 +12,4 @@ rust-embed.workspace = true
 mime_guess.workspace = true
 dotenv.workspace = true
 anyhow.workspace = true
+pawkit-logger = "0.1.25"

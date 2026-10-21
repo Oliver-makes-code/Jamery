@@ -2,6 +2,7 @@
 
 use std::{
     env,
+    fmt::Debug,
     time::{Duration, SystemTime},
 };
 
@@ -27,7 +28,7 @@ use ulid::Ulid;
 use crate::{
     auth::{challenge::challenge, login::login},
     fluxer::{FluxerEndpoints, FluxerWellKnown},
-    media::fetch_media,
+    media::{fetch_media, fetch_media_meta},
     user::{users, users_me},
 };
 
@@ -196,7 +197,7 @@ impl AppState {
     }
 
     async fn authorization_middleware(
-        State(app_state): State<AppState>,
+        State(app_state): State<Self>,
         mut request: Request,
         next: Next,
     ) -> Result<Response, StatusCode> {
@@ -207,23 +208,50 @@ impl AppState {
         return Ok(next.run(request).await);
     }
 
-    pub fn authorized(&self, route: MethodRouter<AppState>) -> MethodRouter<AppState> {
+    pub fn authorized(&self, route: MethodRouter<Self>) -> MethodRouter<Self> {
         route.route_layer(middleware::from_fn_with_state(
             self.clone(),
             Self::authorization_middleware,
         ))
     }
+
+    pub fn routes(self) -> Router {
+        let router = Router::new();
+
+        let router = self.auth_routes(router);
+
+        let router = self.user_routes(router);
+
+        let router = self.media_routes(router);
+
+        return router
+            .layer(DefaultBodyLimit::max(2 * 1024 * 1024))
+            .with_state(self);
+    }
 }
 
 pub async fn router() -> anyhow::Result<Router> {
-    let state = AppState::new().await?;
+    return AppState::new().await.map(AppState::routes);
+}
 
-    return Ok(Router::new()
-        .route("/api/auth/challenge", post(challenge))
-        .route("/api/auth/login", post(login))
-        .route("/api/users/@me", state.authorized(get(users_me)))
-        .route("/api/users/{user}", get(users))
-        .route("/media/{path}", get(fetch_media))
-        .layer(DefaultBodyLimit::max(2 * 1024 * 1024))
-        .with_state(state));
+fn map_status<T, E: Debug>(res: Result<T, E>, error_status: StatusCode) -> Result<T, StatusCode> {
+    return res.map_err(|err| {
+        pawkit_logger::log!(error, "{err:?}");
+
+        return error_status;
+    });
+}
+
+fn map_status_opt<T, E: Debug>(
+    res: Result<Option<T>, E>,
+    error_status: StatusCode,
+    none_status: StatusCode,
+) -> Result<T, StatusCode> {
+    return res
+        .map_err(|err| {
+            pawkit_logger::log!(error, "{err:?}");
+
+            return error_status;
+        })?
+        .ok_or(none_status);
 }
