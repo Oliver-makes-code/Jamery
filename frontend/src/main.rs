@@ -14,7 +14,7 @@ use crate::{
     },
     components::{
         block::Block,
-        button::ActionButton,
+        button::{ActionButton, HamburgerToggleButton, ToggleButton},
         card::{Card, ShowCards},
         header::HeaderBlock,
     },
@@ -37,22 +37,27 @@ pub fn Index() -> impl IntoView {
 
     let auth = use_auth();
 
+    let (get_active, set_active) = signal(false);
+
     return view! {
         <main>
             <HeaderBlock title="Jamery".into()>
-                <Show when=move || auth.logged_out()>
-                    <ActionButton action=move || handle_oauth_redirect(use_navigate())>Login</ActionButton>
-                </Show>
-                <Show when=move || auth.logged_in()>
-                    <ActionButton action=move || {
-                        let auth = auth.clone();
+                <HamburgerToggleButton value=get_active set_value=set_active />
+                <Show when=move || get_active.get()>
+                    <Show when=move || auth.logged_out()>
+                        <ActionButton action=move || handle_oauth_redirect(use_navigate())>Login</ActionButton>
+                    </Show>
+                    <Show when=move || auth.logged_in()>
+                        <ActionButton action=move || {
+                            let auth = auth.clone();
 
 
-                        async move {
-                            logout().await;
-                            auth.refresh();
-                        }
-                    }>Logout</ActionButton>
+                            async move {
+                                logout().await;
+                                auth.refresh();
+                            }
+                        }>Logout</ActionButton>
+                    </Show>
                 </Show>
             </HeaderBlock>
             <Block>

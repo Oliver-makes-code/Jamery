@@ -15,7 +15,7 @@ pub fn HeaderBlock(title: String, #[prop(optional)] children: Option<Children>) 
                     </h1>
 
                     {children.map(|children| view! {
-                        <div class="flex shrink-0 flex-wrap justify-end gap-2">
+                        <div class="flex shrink-0 flex-col items-end justify-end gap-4">
                             {children()}
                         </div>
                     })}
