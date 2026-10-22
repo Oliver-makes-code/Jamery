@@ -33,12 +33,14 @@ pub fn HamburgerToggleButton(
         <button
             type="button"
             class=HAMBURGER_BUTTON_CLASS
-            aria-pressed=move || value.get()
+            aria-expanded=move || value.get()
+            aria-controls="site-navigation"
+            aria-label="Toggle navigation menu"
             on:click=move |_| {
                 set_value.update(|value| *value = !*value);
             }
         >
-            <img width="32" src="/site/hamburger_menu.svg" alt="Hamburger Menu" />
+            <img width="32" src="/site/hamburger_menu.svg" alt="" />
         </button>
     };
 }
