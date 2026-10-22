@@ -18,18 +18,18 @@ pub async fn login(
         StatusCode::INTERNAL_SERVER_ERROR,
     )?;
 
-    let jwt = app_state.encode_jwt(user.id).unwrap();
-
     let username = user.full_username();
     let avatar_url = user.avatar_url(&app_state);
 
-    map_status(
+    let user_id = map_status(
         app_state
             .db
             .upsert_user(user.id, username, user.global_name, avatar_url)
             .await,
         StatusCode::INTERNAL_SERVER_ERROR,
     )?;
+
+    let jwt = app_state.encode_jwt(user_id).unwrap();
 
     return Ok(Response::builder()
         .status(StatusCode::CREATED)

@@ -1,10 +1,15 @@
 use sea_orm::{entity::prelude::DateTimeUtc, *};
 
+use crate::entities::DatabaseId;
+
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "users")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub id: i64,
+    pub id: DatabaseId,
+
+    #[sea_orm(unique)]
+    pub fluxer_id: i64,
 
     pub username: String,
     pub display_name: Option<String>,

@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
+use ulid::Ulid;
 
 #[derive(Serialize, Deserialize)]
 pub struct User {
-    #[serde(with = "crate::u64_as_string")]
-    pub id: u64,
+    pub id: Ulid,
 
     pub username: String,
     pub display_name: Option<String>,

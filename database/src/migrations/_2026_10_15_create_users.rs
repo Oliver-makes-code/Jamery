@@ -11,10 +11,11 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Users::Table)
                     .if_not_exists()
+                    .col(ColumnDef::new(Users::Id).uuid().primary_key().not_null())
                     .col(
-                        ColumnDef::new(Users::Id)
-                            .big_integer()
-                            .primary_key()
+                        ColumnDef::new(Users::FluxerId)
+                            .integer()
+                            .unique_key()
                             .not_null(),
                     )
                     .col(ColumnDef::new(Users::Username).string().not_null())
@@ -41,6 +42,7 @@ impl MigrationTrait for Migration {
 enum Users {
     Table,
     Id,
+    FluxerId,
     Username,
     DisplayName,
     AvatarUrl,

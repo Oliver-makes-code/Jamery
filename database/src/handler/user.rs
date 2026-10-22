@@ -1,21 +1,26 @@
 use jamery_common::user::User;
 use sea_orm::{
-    ActiveValue, DbErr, EntityTrait,
+    ActiveValue, ColumnTrait, DbErr, EntityTrait, QueryFilter,
     sea_query::{OnConflict, prelude::Utc},
 };
+use ulid::Ulid;
 
-use crate::{entities, handler::DatabaseHandler};
+use crate::{
+    entities::{self, DatabaseId},
+    handler::DatabaseHandler,
+};
 
 impl DatabaseHandler {
     pub async fn upsert_user(
         &self,
-        user_id: u64,
+        fluxer_id: u64,
         username: String,
         display_name: Option<String>,
         avatar_url: Option<String>,
-    ) -> Result<(), DbErr> {
+    ) -> Result<Ulid, DbErr> {
         let user = entities::user::ActiveModel {
-            id: ActiveValue::Set(user_id as i64),
+            id: ActiveValue::Set(DatabaseId::new()),
+            fluxer_id: ActiveValue::Set(fluxer_id as i64),
             username: ActiveValue::Set(username),
             display_name: ActiveValue::Set(display_name),
             avatar_url: ActiveValue::Set(avatar_url),
@@ -24,7 +29,7 @@ impl DatabaseHandler {
 
         entities::user::Entity::insert(user)
             .on_conflict(
-                OnConflict::column(entities::user::Column::Id)
+                OnConflict::column(entities::user::Column::FluxerId)
                     .update_columns([
                         entities::user::Column::Username,
                         entities::user::Column::DisplayName,
@@ -35,11 +40,17 @@ impl DatabaseHandler {
             .exec(&self.conn)
             .await?;
 
-        return Ok(());
+        let user = entities::user::Entity::find()
+            .filter(entities::user::Column::FluxerId.eq(fluxer_id))
+            .one(&self.conn)
+            .await?
+            .ok_or(DbErr::RecordNotFound("User not found".to_owned()))?;
+
+        return Ok(user.id.into());
     }
 
-    pub async fn fetch_user(&self, user_id: u64) -> Result<Option<User>, DbErr> {
-        let user = entities::user::Entity::find_by_id(user_id as i64)
+    pub async fn fetch_user(&self, user_id: Ulid) -> Result<Option<User>, DbErr> {
+        let user = entities::user::Entity::find_by_id(DatabaseId::from(user_id))
             .one(&self.conn)
             .await?;
 
@@ -48,7 +59,7 @@ impl DatabaseHandler {
         };
 
         return Ok(Some(User {
-            id: user.id as u64,
+            id: user.id.into(),
             username: user.username,
             display_name: user.display_name,
             avatar_url: user.avatar_url,

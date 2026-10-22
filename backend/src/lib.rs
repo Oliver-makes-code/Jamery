@@ -123,7 +123,7 @@ impl AppState {
         });
     }
 
-    pub fn encode_jwt(&self, user_id: u64) -> Result<String, jsonwebtoken::errors::Error> {
+    pub fn encode_jwt(&self, user_id: Ulid) -> Result<String, jsonwebtoken::errors::Error> {
         let now = SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .expect("system clock is before Unix epoch")
@@ -133,10 +133,7 @@ impl AppState {
 
         return jsonwebtoken::encode(
             &self.jwt_header,
-            &Claims {
-                exp,
-                sub: user_id.into(),
-            },
+            &Claims { exp, sub: user_id },
             &self.jwt_encoding,
         );
     }
