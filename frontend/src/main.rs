@@ -6,15 +6,21 @@ use leptos_router::{
 
 use crate::{
     auth::AuthRoutes,
+    block::Block,
+    button::{BlockButton, ButtonBehavior},
     card::{Card, ShowCards},
+    header::HeaderBlock,
 };
 
 pub mod auth;
+pub mod block;
+pub mod button;
 pub mod card;
+pub mod header;
 
 #[component]
 pub fn Index() -> impl IntoView {
-    let cards = (0..16)
+    let cards = (0..4)
         .map(|_| Card {
             title: "My Submission".into(),
             link: "https://example.com".into(),
@@ -24,14 +30,27 @@ pub fn Index() -> impl IntoView {
         })
         .collect();
 
+    let (get, set) = signal(false);
+
     return view! {
         <nav>
             <A href="/auth/login">"Log in with FluxFur"</A>
         </nav>
 
         <main>
-            <p>meow</p>
+            <HeaderBlock title="Jamery".into()> <BlockButton behavior=ButtonBehavior::Toggle(set)>waow</BlockButton> </HeaderBlock>
+            <Block>
+                <p>meow</p>
+                <p>
+                    <BlockButton behavior=ButtonBehavior::Link("https://example.com/".into())> wawa </BlockButton>
+                    <BlockButton behavior=ButtonBehavior::Link("https://example.com/".into())> wawa </BlockButton>
+                </p>
+                <Show when=move || get.get()>
+                    <p>"waow"</p>
+                </Show>
+            </Block>
             <ShowCards cards/>
+            <Block> meow </Block>
         </main>
     };
 }

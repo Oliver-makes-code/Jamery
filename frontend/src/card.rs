@@ -10,14 +10,17 @@ pub struct Card {
 
 #[component]
 pub fn ShowCard(card: Card) -> impl IntoView {
-    view! {
+    return view! {
         <a
             href=card.link
-            class="flex flex-col items-center gap-3
-                bg-[#73A1D6] p-4 transition
-                hover:bg-[#93bedb] min-h-[256px] min-w-[256px]
+            class="
+                flex flex-col items-center gap-3
+                w-full min-h-[256px] flex-[1_1_256px] max-w-none
+                bg-[#73A1D6] px-4 py-2
                 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.25)]
-                text-center"
+                text-center
+                transition hover:bg-[#93BEDB]
+            "
         >
             <h2 class="text-lg font-bold">
                 {card.title}
@@ -30,7 +33,7 @@ pub fn ShowCard(card: Card) -> impl IntoView {
             })}
 
             {card.icon.map(|icon| view! {
-                <img src=icon alt="" class="w-full h-40 object-contain" />
+                <img src=icon alt="" class="h-[192px] object-contain aspect-square" />
             })}
 
             {(!card.authors.is_empty()).then(|| view! {
@@ -39,16 +42,20 @@ pub fn ShowCard(card: Card) -> impl IntoView {
                 </p>
             })}
         </a>
-    }
+    };
 }
 
 #[component]
 pub fn ShowCards(cards: Vec<Card>) -> impl IntoView {
-    view! {
-        <div class="justify-center flex flex-wrap items-stretch gap-4">
-            {cards.into_iter().map(|card| view! {
-                <ShowCard card />
-            }).collect_view()}
+    return view! {
+        <div class="w-full px-4 pb-4 sm:w-5/8 sm:px-0 mx-auto">
+            <div class="flex flex-wrap justify-center gap-4">
+                {cards.into_iter().map(|card| view! {
+                    <div class="w-full sm:w-[calc(50%-0.5rem)]">
+                        <ShowCard card />
+                    </div>
+                }).collect_view()}
+            </div>
         </div>
-    }
+    };
 }
