@@ -3,7 +3,7 @@ use leptos::prelude::*;
 use leptos_router::{
     NavigateOptions,
     hooks::{use_navigate, use_query},
-    params::Params,
+    params::{Params, ParamsError},
 };
 use serde::{Deserialize, Serialize};
 
@@ -13,7 +13,7 @@ struct OAuthCallback {
     pub state: Option<String>,
 }
 
-async fn handle_oauth_redirect(navigate: &impl Fn(&str, NavigateOptions)) {
+pub async fn handle_oauth_redirect(navigate: impl Fn(&str, NavigateOptions)) {
     let Ok(resp) = gloo_net::http::Request::post("/api/auth/challenge")
         .send()
         .await
@@ -28,51 +28,52 @@ async fn handle_oauth_redirect(navigate: &impl Fn(&str, NavigateOptions)) {
     navigate(&oauth_url, NavigateOptions::default());
 }
 
+async fn login(oauth: Memo<Result<OAuthCallback, ParamsError>>) {
+    let oauth = oauth.with(|it| {
+        let Ok(OAuthCallback {
+            code: Some(code),
+            state: Some(state),
+        }) = it
+        else {
+            return None;
+        };
+
+        return Some((code.clone(), state.clone()));
+    });
+
+    let Some((code, state)) = oauth else {
+        return;
+    };
+
+    let _ = gloo_net::http::Request::post("/api/auth/login")
+        .json(&OAuthArgs { code, state })
+        .unwrap()
+        .send()
+        .await;
+}
+
+pub async fn logout() {
+    let _ = gloo_net::http::Request::post("/api/auth/logout")
+        .send()
+        .await;
+}
+
 #[component]
 pub fn Login() -> impl IntoView {
     let oauth = use_query::<OAuthCallback>();
 
     let navigate = use_navigate();
 
-    let _ = LocalResource::new(move || {
-        let navigate = navigate.clone();
+    leptos::task::spawn_local_scoped(async move {
+        login(oauth).await;
 
-        let oauth = oauth.with(|it| {
-            let Ok(OAuthCallback {
-                code: Some(code),
-                state: Some(state),
-            }) = it
-            else {
-                return None;
-            };
-
-            return Some((code.clone(), state.clone()));
-        });
-
-        async move {
-            let Some((code, state)) = oauth else {
-                return handle_oauth_redirect(&navigate).await;
-            };
-
-            let Ok(resp) = gloo_net::http::Request::post("/api/auth/login")
-                .json(&OAuthArgs { code, state })
-                .unwrap()
-                .send()
-                .await
-            else {
-                return;
-            };
-
-            if resp.ok() {
-                navigate(
-                    "/",
-                    NavigateOptions {
-                        replace: true,
-                        ..Default::default()
-                    },
-                );
-            }
-        }
+        navigate(
+            "/",
+            NavigateOptions {
+                replace: true,
+                ..Default::default()
+            },
+        );
     });
 
     return view! {

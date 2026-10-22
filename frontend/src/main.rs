@@ -1,22 +1,27 @@
+use codee::string::FromToStringCodec;
 use leptos::prelude::*;
 use leptos_router::{
     components::{A, Route, Router, Routes, RoutingProgress},
+    hooks::use_navigate,
     path,
 };
 
 use crate::{
-    auth::AuthRoutes,
-    block::Block,
-    button::{BlockButton, ButtonBehavior},
-    card::{Card, ShowCards},
-    header::HeaderBlock,
+    auth::{
+        AuthRoutes, LoginState,
+        login::{handle_oauth_redirect, logout},
+        use_auth,
+    },
+    components::{
+        block::Block,
+        button::ActionButton,
+        card::{Card, ShowCards},
+        header::HeaderBlock,
+    },
 };
 
 pub mod auth;
-pub mod block;
-pub mod button;
-pub mod card;
-pub mod header;
+pub mod components;
 
 #[component]
 pub fn Index() -> impl IntoView {
@@ -30,24 +35,28 @@ pub fn Index() -> impl IntoView {
         })
         .collect();
 
-    let (get, set) = signal(false);
+    let auth = use_auth();
 
     return view! {
-        <nav>
-            <A href="/auth/login">"Log in with FluxFur"</A>
-        </nav>
-
         <main>
-            <HeaderBlock title="Jamery".into()> <BlockButton behavior=ButtonBehavior::Toggle(set)>waow</BlockButton> </HeaderBlock>
+            <HeaderBlock title="Jamery".into()>
+                <Show when=move || auth.logged_out()>
+                    <ActionButton action=move || handle_oauth_redirect(use_navigate())>Login</ActionButton>
+                </Show>
+                <Show when=move || auth.logged_in()>
+                    <ActionButton action=move || {
+                        let auth = auth.clone();
+
+
+                        async move {
+                            logout().await;
+                            auth.refresh();
+                        }
+                    }>Logout</ActionButton>
+                </Show>
+            </HeaderBlock>
             <Block>
                 <p>meow</p>
-                <p>
-                    <BlockButton behavior=ButtonBehavior::Link("https://example.com/".into())> wawa </BlockButton>
-                    <BlockButton behavior=ButtonBehavior::Link("https://example.com/".into())> wawa </BlockButton>
-                </p>
-                <Show when=move || get.get()>
-                    <p>"waow"</p>
-                </Show>
             </Block>
             <ShowCards cards/>
             <Block> meow </Block>

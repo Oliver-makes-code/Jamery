@@ -40,3 +40,14 @@ pub async fn login(
         .body(Body::empty())
         .unwrap());
 }
+
+pub async fn logout() -> Response {
+    return Response::builder()
+        .status(StatusCode::OK)
+        .header(
+            axum::http::header::SET_COOKIE,
+            "jamery_token=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
+        )
+        .body(Body::empty())
+        .unwrap();
+}

@@ -12,3 +12,5 @@ serde.workspace = true
 gloo-net.workspace = true
 web-sys.workspace = true
 getrandom = { version = "0.4", features = ["wasm_js"] }
+leptos-use-cookie = "0.20.0"
+codee = "0.3.5"

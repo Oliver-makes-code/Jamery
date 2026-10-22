@@ -6,7 +6,10 @@ use url::Url;
 
 use crate::{
     AppState,
-    auth::{challenge::challenge, login::login},
+    auth::{
+        challenge::challenge,
+        login::{login, logout},
+    },
 };
 
 pub mod challenge;
@@ -16,7 +19,8 @@ impl AppState {
     pub fn auth_routes(&self, router: Router<Self>) -> Router<Self> {
         return router
             .route("/api/auth/challenge", post(challenge))
-            .route("/api/auth/login", post(login));
+            .route("/api/auth/login", post(login))
+            .route("/api/auth/logout", post(logout));
     }
 }
 
