@@ -1,27 +1,56 @@
-use codee::string::FromToStringCodec;
 use leptos::prelude::*;
 use leptos_router::{
-    components::{A, Route, Router, Routes, RoutingProgress},
+    components::{Route, Router, Routes, RoutingProgress},
     hooks::use_navigate,
     path,
 };
 
 use crate::{
     auth::{
-        AuthRoutes, LoginState,
+        AuthRoutes,
         login::{handle_oauth_redirect, logout},
         use_auth,
     },
     components::{
         block::Block,
-        button::{ActionButton, HamburgerToggleButton, ToggleButton},
+        button::{ActionButton, HamburgerToggleButton},
         card::{Card, ShowCards},
         header::HeaderBlock,
+        markdown::{Markdown, MarkdownBlock},
     },
 };
 
 pub mod auth;
 pub mod components;
+
+const MARKDOWN_TEST: &str = r#"
+# Waow! Markdown !
+
+```
+console.log("A codeblock");
+```
+
+> Quotes,
+
+- A
+- List
+
+`inline code`, **bold**, *ital*, and ~~strike~~! 
+
+## Smaller heading
+
+paragraph,
+pafsgf
+
+table|a|b
+-|-|-
+1|2|3
+4|5|6
+
+***
+***
+***
+"#;
 
 #[component]
 pub fn Index() -> impl IntoView {
@@ -60,9 +89,7 @@ pub fn Index() -> impl IntoView {
                     </Show>
                 </Show>
             </HeaderBlock>
-            <Block>
-                <p>meow</p>
-            </Block>
+            <MarkdownBlock markdown=MARKDOWN_TEST.to_owned() />
             <ShowCards cards/>
             <Block> meow </Block>
         </main>
