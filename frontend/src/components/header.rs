@@ -3,7 +3,7 @@ use leptos::prelude::*;
 #[component]
 pub fn HeaderBlock(title: String, #[prop(optional)] children: Option<Children>) -> impl IntoView {
     return view! {
-        <div class="w-full px-4 pb-4 mt-2 sm:px-0">
+        <div class="w-full px-4 pb-4 sm:px-0">
             <div class="
                 mx-auto w-full sm:w-5/8
                 bg-[#CE8EDE] px-4 py-2
