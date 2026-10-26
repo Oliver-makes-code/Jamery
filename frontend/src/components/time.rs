@@ -1,8 +1,6 @@
 use chrono::{DateTime, Local, NaiveDateTime, TimeZone, Utc};
 use leptos::prelude::*;
 
-use crate::components::to_kebab_case;
-
 const TIME_INPUT_CLASS: &str = "
     my-0 box-border w-full
     font-[inherit] leading-normal
@@ -20,22 +18,21 @@ pub fn TimeInput(
     value: ReadSignal<DateTime<Utc>>,
     set_value: WriteSignal<DateTime<Utc>>,
     label: String,
+    id: String,
     #[prop(default = false)] required: bool,
     #[prop(default = false)] disabled: bool,
 ) -> impl IntoView {
-    let input_id = to_kebab_case(&label);
-
     return view! {
         <div class="w-full">
             <label
-                for=input_id.clone()
+                for=id.clone()
                 class="block mb-2 font-medium text-black"
             >
                 {label}
             </label>
 
             <input
-                id=input_id
+                id=id
                 type="datetime-local"
                 step="1"
                 class=TIME_INPUT_CLASS

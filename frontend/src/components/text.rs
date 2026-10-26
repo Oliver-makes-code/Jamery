@@ -1,7 +1,5 @@
 use leptos::prelude::*;
 
-use crate::components::to_kebab_case;
-
 const TEXT_INPUT_CLASS: &str = "
     my-0 box-border w-full
     font-[inherit] leading-normal
@@ -20,12 +18,11 @@ pub fn TextInput(
     value: ReadSignal<String>,
     set_value: WriteSignal<String>,
     label: String,
+    id: String,
     #[prop(default = String::new())] placeholder: String,
     #[prop(default = false)] required: bool,
     #[prop(default = false)] disabled: bool,
 ) -> impl IntoView {
-    let id = to_kebab_case(&label);
-
     return view! {
         <div class="w-full">
             <label
@@ -55,13 +52,12 @@ pub fn TextArea(
     value: ReadSignal<String>,
     set_value: WriteSignal<String>,
     label: String,
+    id: String,
     #[prop(default = String::new())] placeholder: String,
     #[prop(default = 6)] rows: u32,
     #[prop(default = false)] required: bool,
     #[prop(default = false)] disabled: bool,
 ) -> impl IntoView {
-    let id = to_kebab_case(&label);
-
     return view! {
         <div class="w-full">
             <label

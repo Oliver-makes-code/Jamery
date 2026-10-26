@@ -102,18 +102,20 @@ pub fn Index() -> impl IntoView {
             <MarkdownBlock markdown=MARKDOWN_TEST.to_owned() />
             <ShowCards cards/>
             <Block>
-                <TextInput value=get_input set_value=set_input label="First Input".into() placeholder="test".into() />
-                <TextArea value=get_area set_value=set_area label="Second Input".into() placeholder="test2".into() />
-                <TimeInput value=get_time set_value=set_time label="Time input".into() />
+                <TextInput id="text-input".into() value=get_input set_value=set_input label="First Input".into() placeholder="test".into() />
+                <TextArea id="text-area".into() value=get_area set_value=set_area label="Second Input".into() placeholder="test2".into() />
+                <TimeInput id="time".into() value=get_time set_value=set_time label="Time input".into() />
 
                 <SingleFileInput
                     set_value=set_file
+                    id="single".into()
                     label="Upload Images".into()
                     accept="image/*".into()
                 />
 
                 <MultiFileInput
                     set_value=set_files
+                    id="multiple".into()
                     label="Attachments".to_string()
                     accept="image/*".into()
                 />

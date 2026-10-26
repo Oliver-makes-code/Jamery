@@ -1,7 +1,5 @@
 use leptos::prelude::*;
 
-use crate::components::to_kebab_case;
-
 const FILE_INPUT_CLASS: &str = "
     my-0 box-border w-full
     font-[inherit] leading-normal
@@ -73,15 +71,14 @@ fn FilePicker(
 pub fn SingleFileInput(
     set_value: WriteSignal<Option<web_sys::File>>,
     label: String,
+    id: String,
     #[prop(default = false)] required: bool,
     #[prop(default = false)] disabled: bool,
     #[prop(default = String::new())] accept: String,
 ) -> impl IntoView {
-    let input_id = to_kebab_case(&label);
-
     return view! {
         <FilePicker
-            id=input_id
+            id=id
             label=label
             required=required
             disabled=disabled
@@ -97,15 +94,14 @@ pub fn SingleFileInput(
 pub fn MultiFileInput(
     set_value: WriteSignal<Vec<web_sys::File>>,
     label: String,
+    id: String,
     #[prop(default = false)] required: bool,
     #[prop(default = false)] disabled: bool,
     #[prop(default = String::new())] accept: String,
 ) -> impl IntoView {
-    let input_id = to_kebab_case(&label);
-
     return view! {
         <FilePicker
-            id=input_id
+            id=id
             label=label
             required=required
             disabled=disabled
