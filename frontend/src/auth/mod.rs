@@ -1,4 +1,5 @@
 use gloo_net::http::Request;
+use jamery_common::user::User;
 use leptos::prelude::*;
 use leptos_router::{
     MatchNestedRoutes,
@@ -21,9 +22,9 @@ pub fn AuthRoutes() -> impl MatchNestedRoutes + Clone + IntoAnyNestedRoute {
     .into_inner();
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LoginState {
-    LoggedIn,
+    LoggedIn(User),
     LoggedOut,
     Error,
 }
@@ -36,11 +37,11 @@ pub struct Auth {
 
 impl Auth {
     pub fn logged_in(&self) -> bool {
-        return self.state.get() == LoginState::LoggedIn;
+        return matches!(self.state.get(), LoginState::LoggedIn(_));
     }
 
     pub fn logged_out(&self) -> bool {
-        return self.state.get() != LoginState::LoggedIn;
+        return matches!(self.state.get(), LoginState::LoggedOut);
     }
 
     pub fn refresh(&self) {
@@ -59,7 +60,9 @@ pub fn use_auth() -> Auth {
 
             set_login_state.set(match result {
                 Ok(response) if response.status() == 401 => LoginState::LoggedOut,
-                Ok(response) if response.ok() => LoginState::LoggedIn,
+                Ok(response) if response.ok() => {
+                    LoginState::LoggedIn(response.json().await.unwrap_or(User::default()))
+                }
                 _ => LoginState::Error,
             });
         });

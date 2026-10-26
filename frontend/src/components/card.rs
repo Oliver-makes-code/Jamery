@@ -1,47 +1,100 @@
+use chrono::{DateTime, Utc};
 use leptos::prelude::*;
 
+#[derive(Clone, Copy)]
 pub struct Card {
-    pub title: String,
-    pub link: String,
-    pub authors: Vec<String>,
-    pub description: Option<String>,
-    pub icon: Option<String>,
+    pub title: Signal<String>,
+    pub link: Signal<Option<String>>,
+    pub authors: Signal<Vec<String>>,
+    pub summary: Signal<Option<String>>,
+    pub start_date: Signal<Option<DateTime<Utc>>>,
+    pub end_date: Signal<Option<DateTime<Utc>>>,
+    pub icon: Signal<Option<String>>,
 }
+
+const CARD_CLASS: &str = "
+    flex flex-col items-center gap-3
+    w-full min-h-[256px] flex-[1_1_256px] max-w-none
+    h-auto
+    bg-[#73A1D6] px-4 py-2
+    shadow-[8px_8px_0px_0px_rgba(0,0,0,0.25)]
+    text-center
+    transition hover:bg-[#93BEDB]
+    wrap-anywhere
+";
 
 #[component]
 pub fn ShowCard(card: Card) -> impl IntoView {
-    return view! {
-        <a
-            href=card.link
-            class="
-                flex flex-col items-center gap-3
-                w-full min-h-[256px] flex-[1_1_256px] max-w-none
-                bg-[#73A1D6] px-4 py-2
-                shadow-[8px_8px_0px_0px_rgba(0,0,0,0.25)]
-                text-center
-                transition hover:bg-[#93BEDB]
-            "
-        >
-            <h2 class="text-lg font-bold">
-                {card.title}
-            </h2>
+    let children = view! {
+        <h2 class="text-lg font-bold">
+            {move || card.title.get()}
+        </h2>
 
-            {card.description.map(|description| view! {
+        {move || card.summary.get().map(|description| {
+            view! {
                 <p class="text-sm">
                     {description}
                 </p>
-            })}
+            }
+        })}
 
-            {card.icon.map(|icon| view! {
-                <img src=icon alt="" class="h-[192px] object-contain aspect-square" />
-            })}
+        {move || card.icon.get().map(|icon| {
+            view! {
+                <img
+                    src=icon
+                    alt=""
+                    class="h-[192px] object-contain aspect-square"
+                />
+            }
+        })}
 
-            {(!card.authors.is_empty()).then(|| view! {
-                <p class="mt-auto text-sm">
-                    {format!("by {}", card.authors.join(", "))}
-                </p>
-            })}
-        </a>
+        {move || {
+            let authors = card.authors.get();
+            let start_date = card.start_date.get();
+            let end_date = card.end_date.get();
+
+            (!authors.is_empty() || start_date.is_some() || end_date.is_some()).then(|| {
+                view! {
+                    <div class="mt-auto text-sm">
+                        {(!authors.is_empty()).then(|| view! {
+                            <p>
+                                {format!("by {}", authors.join(", "))}
+                            </p>
+                        })}
+
+                        {start_date.map(|date| view! {
+                            <p>
+                                {format!("Begins {}", date.with_timezone(&chrono::Local).format("%b %d, %Y"))}
+                            </p>
+                        })}
+
+                        {end_date.map(|date| view! {
+                            <p>
+                                {format!("Ends {}", date.with_timezone(&chrono::Local).format("%b %d, %Y"))}
+                            </p>
+                        })}
+                    </div>
+                }
+            })
+        }}
+    };
+
+    return view! {
+        {move || match card.link.get() {
+            Some(link) => view! {
+                <a
+                    href=link
+                    class=CARD_CLASS
+                >
+                    {children.clone()}
+                </a>
+            }.into_any(),
+            None => view! {
+                <div class=CARD_CLASS>
+                    {children.clone()}
+                </div>
+            }.into_any(),
+        }}
     };
 }
 

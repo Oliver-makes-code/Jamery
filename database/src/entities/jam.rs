@@ -11,7 +11,7 @@ pub struct Model {
     pub created_by: i64,
 
     pub title: String,
-    pub short_description: Option<String>,
+    pub summary: Option<String>,
     #[sea_orm(column_type = "Text")]
     pub description: Option<String>,
 

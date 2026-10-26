@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use ulid::Ulid;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Default, Clone, Debug, PartialEq, Eq)]
 pub struct User {
     pub id: Ulid,
 

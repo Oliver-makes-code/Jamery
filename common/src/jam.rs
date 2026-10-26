@@ -6,11 +6,10 @@ use ulid::Ulid;
 pub struct Jam {
     pub id: Ulid,
 
-    #[serde(with = "crate::u64_as_string")]
-    pub created_by: u64,
+    pub created_by: Ulid,
 
     pub title: String,
-    pub short_description: Option<String>,
+    pub summary: Option<String>,
     pub description: Option<String>,
 
     pub starts: DateTime<Utc>,
@@ -26,7 +25,7 @@ pub struct Submission {
     pub icon: Option<Ulid>,
 
     pub title: String,
-    pub short_description: Option<String>,
+    pub summary: Option<String>,
     pub description: Option<String>,
 
     pub source_url: Option<String>,
@@ -36,8 +35,7 @@ pub struct Submission {
 pub struct SubmissionAuthor {
     pub submission_id: Ulid,
 
-    #[serde(with = "crate::u64_as_string")]
-    pub author: u64,
+    pub author: Ulid,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -46,6 +44,5 @@ pub struct SubmissionMedia {
 
     pub submission_id: Ulid,
 
-    #[serde(with = "crate::u64_as_string")]
-    pub uploaded_by: u64,
+    pub uploaded_by: Ulid,
 }
