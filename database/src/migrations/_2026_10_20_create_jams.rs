@@ -14,6 +14,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(ColumnDef::new(Jams::Id).uuid().not_null().primary_key())
                     .col(ColumnDef::new(Jams::Title).string().not_null())
+                    .col(ColumnDef::new(Jams::ShortDescription).string().null())
                     .col(ColumnDef::new(Jams::Description).text().null())
                     .col(ColumnDef::new(Jams::CreatedBy).big_integer().not_null())
                     .col(
@@ -45,6 +46,11 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(JamSubmissions::JamId).uuid().not_null())
                     .col(ColumnDef::new(JamSubmissions::Title).string().not_null())
+                    .col(
+                        ColumnDef::new(JamSubmissions::ShortDescription)
+                            .string()
+                            .null(),
+                    )
                     .col(ColumnDef::new(JamSubmissions::Description).text().null())
                     .col(ColumnDef::new(JamSubmissions::Icon).uuid().null())
                     .col(ColumnDef::new(JamSubmissions::SourceUrl).string().null())
@@ -191,6 +197,7 @@ enum Jams {
     Table,
     Id,
     Title,
+    ShortDescription,
     Description,
     CreatedBy,
     Starts,
@@ -204,6 +211,7 @@ enum JamSubmissions {
     JamId,
     Title,
     Icon,
+    ShortDescription,
     Description,
     SourceUrl,
     Updated,

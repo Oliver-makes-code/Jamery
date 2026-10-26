@@ -17,6 +17,7 @@ use crate::{
         card::{Card, ShowCards},
         header::HeaderBlock,
         markdown::{Markdown, MarkdownBlock},
+        text::{TextArea, TextInput},
     },
 };
 
@@ -68,6 +69,9 @@ pub fn Index() -> impl IntoView {
 
     let (get_active, set_active) = signal(false);
 
+    let (get_input, set_input) = signal(String::new());
+    let (get_area, set_area) = signal(String::new());
+
     return view! {
         <main>
             <HeaderBlock title="Jamery".into()>
@@ -91,7 +95,13 @@ pub fn Index() -> impl IntoView {
             </HeaderBlock>
             <MarkdownBlock markdown=MARKDOWN_TEST.to_owned() />
             <ShowCards cards/>
-            <Block> meow </Block>
+            <Block>
+                wawa
+                <TextInput value=get_input set_value=set_input />
+                awawa
+                <TextArea value=get_area set_value=set_area />
+                meow
+            </Block>
         </main>
     };
 }

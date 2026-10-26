@@ -13,6 +13,7 @@ pub struct Model {
     pub icon: Option<DatabaseId>,
 
     pub title: String,
+    pub short_description: Option<String>,
     #[sea_orm(column_type = "Text")]
     pub description: Option<String>,
 

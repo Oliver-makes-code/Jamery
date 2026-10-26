@@ -10,6 +10,7 @@ pub struct Jam {
     pub created_by: u64,
 
     pub title: String,
+    pub short_description: Option<String>,
     pub description: Option<String>,
 
     pub starts: DateTime<Utc>,
@@ -25,6 +26,7 @@ pub struct Submission {
     pub icon: Option<Ulid>,
 
     pub title: String,
+    pub short_description: Option<String>,
     pub description: Option<String>,
 
     pub source_url: Option<String>,

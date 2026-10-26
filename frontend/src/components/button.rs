@@ -16,9 +16,13 @@ const HAMBURGER_BUTTON_CLASS: &str = "
 ";
 
 #[component]
-pub fn LinkButton(href: String, children: Children) -> impl IntoView {
+pub fn LinkButton(
+    href: String,
+    children: Children,
+    #[prop(optional)] label: Option<String>,
+) -> impl IntoView {
     return view! {
-        <a href=href class=BUTTON_CLASS>
+        <a aria-label=label href=href class=BUTTON_CLASS>
             {children()}
         </a>
     };
@@ -50,11 +54,13 @@ pub fn ToggleButton(
     value: ReadSignal<bool>,
     set_value: WriteSignal<bool>,
     children: Children,
+    #[prop(optional)] label: Option<String>,
 ) -> impl IntoView {
     return view! {
         <button
             type="button"
             class=BUTTON_CLASS
+            aria-label=label
             aria-pressed=move || value.get()
             on:click=move |_| {
                 set_value.update(|value| *value = !*value);
@@ -66,20 +72,25 @@ pub fn ToggleButton(
 }
 
 #[component]
-pub fn ActionButton<F, Fut>(action: F, children: Children) -> impl IntoView
+pub fn ActionButton<F, Fut>(
+    action: F,
+    children: Children,
+    #[prop(optional)] label: Option<String>,
+) -> impl IntoView
 where
     F: Fn() -> Fut + 'static,
     Fut: Future<Output = ()> + 'static,
 {
-    view! {
+    return view! {
         <button
             type="button"
             class=BUTTON_CLASS
+            aria-label=label
             on:click=move |_| {
                 leptos::task::spawn_local_scoped(action());
             }
         >
             {children()}
         </button>
-    }
+    };
 }
