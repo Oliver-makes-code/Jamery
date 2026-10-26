@@ -2221,6 +2221,7 @@ dependencies = [
 name = "jamery-frontend"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "codee",
  "getrandom 0.4.3",
  "gloo-net 0.7.0",

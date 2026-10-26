@@ -1,3 +1,4 @@
+use chrono::Utc;
 use leptos::prelude::*;
 use leptos_router::{
     components::{Route, Router, Routes, RoutingProgress},
@@ -15,9 +16,11 @@ use crate::{
         block::Block,
         button::{ActionButton, HamburgerToggleButton},
         card::{Card, ShowCards},
+        file::{MultiFileInput, SingleFileInput},
         header::HeaderBlock,
-        markdown::{Markdown, MarkdownBlock},
+        markdown::MarkdownBlock,
         text::{TextArea, TextInput},
+        time::TimeInput,
     },
 };
 
@@ -71,6 +74,9 @@ pub fn Index() -> impl IntoView {
 
     let (get_input, set_input) = signal(String::new());
     let (get_area, set_area) = signal(String::new());
+    let (get_time, set_time) = signal(Utc::now());
+    let (_get_file, set_file) = signal::<Option<web_sys::File>>(None);
+    let (_get_files, set_files) = signal::<Vec<web_sys::File>>(Vec::new());
 
     return view! {
         <main>
@@ -98,6 +104,19 @@ pub fn Index() -> impl IntoView {
             <Block>
                 <TextInput value=get_input set_value=set_input label="First Input".into() placeholder="test".into() />
                 <TextArea value=get_area set_value=set_area label="Second Input".into() placeholder="test2".into() />
+                <TimeInput value=get_time set_value=set_time label="Time input".into() />
+
+                <SingleFileInput
+                    set_value=set_file
+                    label="Upload Images".into()
+                    accept="image/*".into()
+                />
+
+                <MultiFileInput
+                    set_value=set_files
+                    label="Attachments".to_string()
+                    accept="image/*".into()
+                />
             </Block>
         </main>
     };

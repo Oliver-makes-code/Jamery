@@ -1,5 +1,7 @@
 use leptos::prelude::*;
 
+use crate::components::to_kebab_case;
+
 const TEXT_INPUT_CLASS: &str = "
     my-0 box-border w-full
     font-[inherit] leading-normal
@@ -8,28 +10,10 @@ const TEXT_INPUT_CLASS: &str = "
     placeholder:text-black/60
     hover:bg-[#F1DBE6]
     focus:bg-[#F1DBE6]
-    focus:outline-none focus:ring-2 focus:ring-inset focus:ring-black
+    focus:outline-none focus:ring focus:ring-inset focus:ring-black
     resize-none
     transition
 ";
-
-fn to_kebab_case(value: &str) -> String {
-    let mut result = String::new();
-
-    for (index, ch) in value.chars().enumerate() {
-        if ch.is_ascii_alphanumeric() {
-            if ch.is_uppercase() && index > 0 {
-                result.push('-');
-            }
-
-            result.extend(ch.to_lowercase());
-        } else if !result.is_empty() && !result.ends_with('-') {
-            result.push('-');
-        }
-    }
-
-    return result.trim_matches('-').to_string();
-}
 
 #[component]
 pub fn TextInput(
