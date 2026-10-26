@@ -96,11 +96,8 @@ pub fn Index() -> impl IntoView {
             <MarkdownBlock markdown=MARKDOWN_TEST.to_owned() />
             <ShowCards cards/>
             <Block>
-                wawa
-                <TextInput value=get_input set_value=set_input />
-                awawa
-                <TextArea value=get_area set_value=set_area />
-                meow
+                <TextInput value=get_input set_value=set_input label="First Input".into() placeholder="test".into() />
+                <TextArea value=get_area set_value=set_area label="Second Input".into() placeholder="test2".into() />
             </Block>
         </main>
     };

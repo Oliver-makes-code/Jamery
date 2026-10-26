@@ -36,7 +36,7 @@ const BLOCK_CLASSES: &str = "
     [&_td]:border [&_td]:px-2 [&_td]:py-1
     [&_th]:border [&_th]:px-2 [&_th]:py-1
 
-    [&_.inline-code]:bg-[rgba(0,0,0,0.25)]
+    [&_.inline-code]:bg-[#9061C8]
     [&_.inline-code]:px-2 [&_.inline-code]:py-1
 ";
 
