@@ -17,6 +17,16 @@ pub struct Jam {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct JamCreate {
+    pub title: String,
+    pub summary: Option<String>,
+    pub description: Option<String>,
+
+    pub starts: DateTime<Utc>,
+    pub ends: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Submission {
     pub id: Ulid,
 

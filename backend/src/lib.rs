@@ -3,6 +3,7 @@
 use std::{
     env,
     fmt::Debug,
+    num::NonZeroU64,
     time::{Duration, SystemTime},
 };
 
@@ -23,17 +24,14 @@ use reqwest::{
     Client, StatusCode,
     header::{self, COOKIE},
 };
+use serde::Deserialize;
 use ulid::Ulid;
 
-use crate::{
-    auth::{challenge::challenge, login::login},
-    fluxer::{FluxerEndpoints, FluxerWellKnown},
-    media::{fetch_media, fetch_media_meta},
-    user::{users, users_me},
-};
+use crate::fluxer::{FluxerEndpoints, FluxerWellKnown};
 
 pub mod auth;
 pub mod fluxer;
+pub mod jam;
 pub mod media;
 pub mod user;
 
@@ -221,6 +219,8 @@ impl AppState {
 
         let router = self.media_routes(router);
 
+        let router = self.jam_routes(router);
+
         return router
             .layer(DefaultBodyLimit::max(2 * 1024 * 1024))
             .with_state(self);
@@ -229,6 +229,18 @@ impl AppState {
 
 pub async fn router() -> anyhow::Result<Router> {
     return AppState::new().await.map(AppState::routes);
+}
+
+fn page_size_default() -> NonZeroU64 {
+    return NonZeroU64::new(256).unwrap();
+}
+
+#[derive(Deserialize)]
+struct Pagination {
+    #[serde(default)]
+    pub page: u64,
+    #[serde(default = "page_size_default")]
+    pub page_size: NonZeroU64,
 }
 
 fn map_status<T, E: Debug>(res: Result<T, E>, error_status: StatusCode) -> Result<T, StatusCode> {

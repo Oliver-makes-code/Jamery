@@ -11,7 +11,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub media_id: DatabaseId,
 
-    pub uploader: i64,
+    pub uploader: DatabaseId,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

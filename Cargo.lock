@@ -2196,6 +2196,7 @@ dependencies = [
 name = "jamery-database"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "jamery-common",
  "mime_guess",
  "sea-orm",
@@ -2231,6 +2232,7 @@ dependencies = [
  "leptos_router",
  "pulldown-cmark",
  "serde",
+ "ulid",
  "web-sys",
 ]
 

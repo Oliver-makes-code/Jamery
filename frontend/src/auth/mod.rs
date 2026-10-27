@@ -41,7 +41,7 @@ impl Auth {
     }
 
     pub fn logged_out(&self) -> bool {
-        return matches!(self.state.get(), LoginState::LoggedOut);
+        return matches!(self.state.get(), LoginState::LoggedOut | LoginState::Error);
     }
 
     pub fn refresh(&self) {

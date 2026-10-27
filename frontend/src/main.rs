@@ -1,10 +1,12 @@
 use chrono::Utc;
+use jamery_common::{jam::Jam, user::User};
 use leptos::prelude::*;
 use leptos_router::{
     components::{Route, Router, Routes, RoutingProgress},
     hooks::use_navigate,
     path,
 };
+use ulid::Ulid;
 
 use crate::{
     auth::{
@@ -57,6 +59,38 @@ table|a|b
 ***
 ***
 "#;
+
+pub async fn fetch_jams() -> Vec<Jam> {
+    let Ok(value) = gloo_net::http::Request::get("/api/jams").send().await else {
+        return vec![];
+    };
+
+    let Ok(json) = value.json().await else {
+        return vec![];
+    };
+
+    return json;
+}
+
+pub async fn fetch_jam(id: Ulid) -> Option<Jam> {
+    return gloo_net::http::Request::get(&format!("/api/jams/{}", id))
+        .send()
+        .await
+        .ok()?
+        .json()
+        .await
+        .ok();
+}
+
+pub async fn fetch_user(id: Ulid) -> Option<User> {
+    return gloo_net::http::Request::get(&format!("/api/users/{}", id))
+        .send()
+        .await
+        .ok()?
+        .json()
+        .await
+        .ok();
+}
 
 #[component]
 pub fn Index() -> impl IntoView {
@@ -117,7 +151,7 @@ pub fn Index() -> impl IntoView {
                 </Show>
             </HeaderBlock>
             <MarkdownBlock markdown=MARKDOWN_TEST.to_owned() />
-            <ShowCards cards/>
+            <ShowCards cards=Signal::stored(cards)/>
             <Block>
                 <TextInput id="text-input".into() value=get_input set_value=set_input label="First Input".into() placeholder="test".into() />
                 <TextArea id="text-area".into() value=get_area set_value=set_area label="Second Input".into() placeholder="test2".into() />

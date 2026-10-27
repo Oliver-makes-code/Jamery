@@ -16,7 +16,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Jams::Title).string().not_null())
                     .col(ColumnDef::new(Jams::Summary).string().null())
                     .col(ColumnDef::new(Jams::Description).text().null())
-                    .col(ColumnDef::new(Jams::CreatedBy).big_integer().not_null())
+                    .col(ColumnDef::new(Jams::CreatedBy).uuid().not_null())
                     .col(
                         ColumnDef::new(Jams::Starts)
                             .timestamp_with_time_zone()
@@ -27,7 +27,7 @@ impl MigrationTrait for Migration {
                             .timestamp_with_time_zone()
                             .not_null(),
                     )
-                    .check(Expr::col(Jams::Ends).gt(Expr::col(Jams::Starts)))
+                    .check(Expr::col(Jams::Ends).gte(Expr::col(Jams::Starts)))
                     .to_owned(),
             )
             .await?;
@@ -91,7 +91,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(JamSubmissionMedia::Uploader)
-                            .big_integer()
+                            .uuid()
                             .not_null(),
                     )
                     .primary_key(
@@ -128,11 +128,7 @@ impl MigrationTrait for Migration {
                             .uuid()
                             .not_null(),
                     )
-                    .col(
-                        ColumnDef::new(JamSubmissionUsers::UserId)
-                            .big_integer()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(JamSubmissionUsers::UserId).uuid().not_null())
                     .primary_key(
                         Index::create()
                             .col(JamSubmissionUsers::SubmissionId)

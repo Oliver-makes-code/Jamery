@@ -9,7 +9,7 @@ pub struct Model {
     pub submission_id: DatabaseId,
 
     #[sea_orm(primary_key, auto_increment = false)]
-    pub user_id: i64,
+    pub user_id: DatabaseId,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

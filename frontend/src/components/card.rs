@@ -99,11 +99,11 @@ pub fn ShowCard(card: Card) -> impl IntoView {
 }
 
 #[component]
-pub fn ShowCards(cards: Vec<Card>) -> impl IntoView {
+pub fn ShowCards(cards: Signal<Vec<Card>>) -> impl IntoView {
     return view! {
         <div class="w-full px-4 pb-4 sm:w-5/8 sm:px-0 mx-auto">
             <div class="flex flex-wrap justify-center gap-4">
-                {cards.into_iter().map(|card| view! {
+                {move || cards.get().into_iter().map(|card| view! {
                     <div class="w-full sm:w-[calc(50%-0.5rem)]">
                         <ShowCard card />
                     </div>

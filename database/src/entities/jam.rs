@@ -8,7 +8,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: DatabaseId,
 
-    pub created_by: i64,
+    pub created_by: DatabaseId,
 
     pub title: String,
     pub summary: Option<String>,

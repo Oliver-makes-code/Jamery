@@ -16,3 +16,10 @@ leptos-use-cookie = "0.20.0"
 codee = "0.3.5"
 pulldown-cmark = "0.13.5"
 chrono.workspace = true
+ulid.workspace = true
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
