@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
 use jamery_common::jam::JamCreate;
 use leptos::prelude::*;
+use leptos_meta::Title;
 use leptos_router::{NavigateOptions, hooks::use_navigate};
 
 use crate::{
@@ -90,6 +91,7 @@ pub fn Create() -> impl IntoView {
     };
 
     return view! {
+        <Title text="Create a Jam | Jamery" />
         <HeaderBlock title="Create a Jam".into()>
             <HamburgerToggleButton value=get_navbar set_value=set_navbar />
             <Show when=move || get_navbar.get()>

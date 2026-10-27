@@ -1,4 +1,5 @@
 use leptos::prelude::*;
+use leptos_meta::Title;
 use leptos_router::{
     MatchNestedRoutes,
     any_nested_route::IntoAnyNestedRoute,
@@ -50,6 +51,7 @@ pub fn Jam() -> impl IntoView {
                     let title = jam.title.clone();
 
                     view! {
+                        <Title text=format!("{} | Jamery", title) />
                         <main>
                             <HeaderBlock title=title.into()>
                                 <HamburgerToggleButton value=get_navbar set_value=set_navbar />

@@ -3,6 +3,7 @@ use jamery_common::{
     user::User,
 };
 use leptos::prelude::*;
+use leptos_meta::provide_meta_context;
 use leptos_router::{
     components::{Route, Router, Routes},
     path,
@@ -74,6 +75,7 @@ fn NotFound() -> impl IntoView {
 
 #[component]
 pub fn App() -> impl IntoView {
+    provide_meta_context();
     return view! {
         <Router>
             <Routes fallback=NotFound>

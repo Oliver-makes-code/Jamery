@@ -1,4 +1,5 @@
 use leptos::prelude::*;
+use leptos_meta::Title;
 use leptos_router::hooks::use_navigate;
 
 use crate::{
@@ -44,6 +45,7 @@ pub fn Home() -> impl IntoView {
     });
 
     return view! {
+        <Title text="Jamery" />
         <main>
             <HeaderBlock title="Jamery".into()>
                 <HamburgerToggleButton value=get_navbar set_value=set_navbar />
