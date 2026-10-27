@@ -1,13 +1,11 @@
-use std::ops::Not;
-
 use chrono::{DateTime, Utc};
-use jamery_common::jam::{Jam, JamCreate};
-use leptos::{html::summary, prelude::*};
+use jamery_common::jam::JamCreate;
+use leptos::prelude::*;
 use leptos_router::{NavigateOptions, hooks::use_navigate};
 
 use crate::{
     auth::{
-        Auth, LoginState,
+        LoginState,
         login::{handle_oauth_redirect, logout},
         use_auth,
     },
@@ -20,6 +18,7 @@ use crate::{
         text::{TextArea, TextInput},
         time::TimeInput,
     },
+    create_jam,
 };
 
 async fn submit(
@@ -49,15 +48,7 @@ async fn submit(
         ends: end_time,
     };
 
-    let jam = gloo_net::http::Request::post("/api/jams")
-        .json(&create)
-        .unwrap()
-        .send()
-        .await
-        .unwrap()
-        .json::<Jam>()
-        .await
-        .unwrap();
+    let jam = create_jam(create).await.unwrap();
 
     navigate(&format!("/jams/{}", jam.id), NavigateOptions::default())
 }
@@ -76,7 +67,7 @@ pub fn Create() -> impl IntoView {
 
     let title_error = Signal::derive(move || get_title.get().trim().is_empty());
 
-    let time_error = Signal::derive(move || get_end_time.get() < get_start_time.get());
+    let time_error = Signal::derive(move || get_end_time.get() <= get_start_time.get());
 
     let card = Card {
         title: get_title.into(),

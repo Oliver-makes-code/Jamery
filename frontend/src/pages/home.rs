@@ -1,4 +1,3 @@
-use jamery_common::jam::Jam;
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
 
@@ -61,7 +60,7 @@ pub fn Home() -> impl IntoView {
                                 auth.refresh();
                             }
                         }>Logout</ActionButton>
-                        <LinkButton href="/jam/create".into()>Create a Jam</LinkButton>
+                        <LinkButton href="/jams/create".into()>Create a Jam</LinkButton>
                     </Show>
                 </Show>
             </HeaderBlock>
