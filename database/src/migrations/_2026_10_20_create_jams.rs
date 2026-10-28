@@ -27,7 +27,7 @@ impl MigrationTrait for Migration {
                             .timestamp_with_time_zone()
                             .not_null(),
                     )
-                    .check(Expr::col(Jams::Ends).gte(Expr::col(Jams::Starts)))
+                    .check(Expr::col(Jams::Ends).gt(Expr::col(Jams::Starts)))
                     .to_owned(),
             )
             .await?;

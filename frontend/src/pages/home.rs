@@ -13,7 +13,7 @@ use crate::{
         header::HeaderBlock,
         markdown::MarkdownBlock,
     },
-    fetch_jams,
+    fetch_jams, fetch_user,
 };
 
 #[component]
@@ -28,10 +28,16 @@ pub fn Home() -> impl IntoView {
         let mut jams = Vec::new();
 
         for jam in fetch_jams().await {
+            let user = if let Some(user) = fetch_user(jam.created_by).await {
+                user.display_name.unwrap_or(user.username)
+            } else {
+                jam.created_by.to_string()
+            };
+
             let card = Card {
                 title: Signal::stored(jam.title),
                 link: Signal::stored(Some(format!("/jams/{}", jam.id))),
-                authors: Signal::stored(vec![jam.created_by.to_string()]),
+                authors: Signal::stored(vec![user]),
                 start_date: Signal::stored(Some(jam.starts)),
                 end_date: Signal::stored(Some(jam.ends)),
                 summary: Signal::stored(jam.summary),
